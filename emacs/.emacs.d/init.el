@@ -20,7 +20,20 @@
   (ivy-mode 1)
   (setq ivy-use-virtual-buffers t)
   (setq ivy-count-format "(%d/%d) ")
-  (setq ivy-wrap t))
+  (setq ivy-wrap t)
+  ;; Flex fuzzy matching for the project file finder so a contiguous
+  ;; query like "sardineservice" matches "sardine.service" (separators
+  ;; in the filename no longer break the match).  Everything else keeps
+  ;; the default literal/substring matcher.
+  (setq ivy-re-builders-alist
+        '((counsel-projectile-find-file . ivy--regex-fuzzy)
+          (t                            . ivy--regex-plus)))
+  ;; flx ranking only engages below this candidate count; raise it well
+  ;; past typical project file counts so the fuzzy matches sort sensibly.
+  (setq ivy-flx-limit 10000))
+
+;; flx scores fuzzy candidates so the tightest matches float to the top.
+(use-package flx)
 
 (use-package counsel
   :diminish
@@ -231,7 +244,8 @@
 
 ;; --- Magit (Git interface) ---------------------------------
 (use-package magit
-  :bind ("C-x g" . magit-status))
+  :bind (("C-x g"   . magit-status)
+         ("C-c g b" . magit-blame)))
 
 ;; --- Jest (run tests from the buffer) ----------------------
 ;; Defaults already give us `npx jest` and the `C-c C-t` keymap,
