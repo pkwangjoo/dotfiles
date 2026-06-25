@@ -28,9 +28,10 @@
   (setq ivy-re-builders-alist
         '((counsel-projectile-find-file . ivy--regex-fuzzy)
           (t                            . ivy--regex-plus)))
-  ;; flx ranking only engages below this candidate count; raise it well
-  ;; past typical project file counts so the fuzzy matches sort sensibly.
-  (setq ivy-flx-limit 10000))
+  ;; flx ranking only engages below this candidate count; keep it low so
+  ;; flx fine-ranks just the narrowed result set instead of scoring every
+  ;; file in the project on each keystroke (~500ms lag in a 4k-file repo).
+  (setq ivy-flx-limit 200))
 
 ;; flx scores fuzzy candidates so the tightest matches float to the top.
 (use-package flx)
