@@ -50,10 +50,10 @@
   :config
   (exec-path-from-shell-initialize))
 
-;; Atom One Dark theme (faithful port of Atom's One Dark)
-(use-package atom-one-dark-theme
+;; Zenburn theme (low-contrast dark theme)
+(use-package zenburn-theme
   :config
-  (load-theme 'atom-one-dark t))
+  (load-theme 'zenburn t))
 
 ;; ============================================================
 ;; Markdown: document-style reading view
@@ -378,10 +378,10 @@ The path is relative to the Projectile project root, prefixed with
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(apheleia atom-one-dark-theme corfu counsel-projectile
-              exec-path-from-shell flymake-eslint jest-test-mode magit
-              markdown-mode mixed-pitch visual-fill-column)))
+ '(custom-safe-themes
+   '("a5c590aeb7dc5c2b8d36601a4c94a1145e46bd2291571af02807dd7a8552630c"
+     default))
+ '(package-selected-packages nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
