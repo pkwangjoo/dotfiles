@@ -143,6 +143,9 @@
 ;; Matching parens
 (show-paren-mode 1)
 
+;; Auto-insert the closing ) ] } (and quote string-delimiters per mode syntax)
+(electric-pair-mode 1)
+
 ;; ============================================================
 ;; Keep the cursor centered when paging with C-v / M-v
 ;; ============================================================
@@ -203,6 +206,8 @@
 ;; Eglot already knows to launch typescript-language-server for these modes.
 (use-package eglot
   :ensure nil                      ; built-in; do not fetch from MELPA
+  :bind (:map eglot-mode-map
+              ("M-T" . eglot-find-typeDefinition))   ; M-Shift-t: go to type definition
   :hook ((typescript-ts-mode . eglot-ensure)
          (tsx-ts-mode        . eglot-ensure)))
 
@@ -254,6 +259,22 @@
 (use-package jest-test-mode
   :hook ((typescript-ts-mode . jest-test-mode)
          (tsx-ts-mode        . jest-test-mode)))
+
+;; --- treesit-fold (tree-sitter code folding) ---------------
+;; Collapse { ... } blocks (also functions, comments, JSX) to trace control
+;; flow.  Tree-sitter native, so it folds on the real TS/TSX syntax tree
+;; rather than matching braces.  Keys live in treesit-fold-mode-map, so they
+;; exist only in buffers where folding is on (i.e. .ts / .tsx).
+(use-package treesit-fold
+  :hook ((typescript-ts-mode . treesit-fold-mode)
+         (tsx-ts-mode        . treesit-fold-mode))
+  :bind (:map treesit-fold-mode-map
+              ("C-<tab>" . treesit-fold-toggle)
+              ("C-c z z" . treesit-fold-toggle)
+              ("C-c z a" . treesit-fold-close-all)
+              ("C-c z r" . treesit-fold-open-all)
+              ("C-c z o" . treesit-fold-open)
+              ("C-c z c" . treesit-fold-close)))
 
 ;; ============================================================
 ;; Reload configuration from disk
@@ -396,7 +417,11 @@ The path is relative to the Projectile project root, prefixed with
  '(custom-safe-themes
    '("a5c590aeb7dc5c2b8d36601a4c94a1145e46bd2291571af02807dd7a8552630c"
      default))
- '(package-selected-packages nil))
+ '(package-selected-packages
+   '(apheleia atom-one-dark-theme corfu counsel-projectile
+              exec-path-from-shell flx flymake-eslint jest-test-mode
+              magit markdown-mode mixed-pitch treesit-fold
+              visual-fill-column zenburn-theme)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
