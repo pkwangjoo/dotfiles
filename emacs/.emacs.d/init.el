@@ -118,6 +118,45 @@
 (scroll-bar-mode -1)
 (setq inhibit-startup-screen t)
 
+;; ============================================================
+;; Tab bar: project-named workspace tabs
+;; ============================================================
+;; One frame-level tab per workspace.  The tab is named after the
+;; projectile project root folder of the selected window's buffer,
+;; falling back to the buffer name when that buffer is not inside a
+;; project.  The face tweaks must run after the theme loads so they
+;; win over Zenburn's own tab-bar faces.
+
+(defun my/tab-bar-project-name ()
+  "Tab name: projectile project root folder, else buffer name.
+Mirrors `tab-bar-tab-name-current' so the name tracks the selected
+window's buffer and stays correct while the minibuffer is active."
+  (let ((buffer (window-buffer (or (minibuffer-selected-window)
+                                   (and (window-minibuffer-p)
+                                        (get-mru-window))))))
+    (with-current-buffer buffer
+      (if-let ((root (and (fboundp 'projectile-project-root)
+                          (projectile-project-root))))
+          (file-name-nondirectory (directory-file-name root))
+        (buffer-name buffer)))))
+
+(setq tab-bar-tab-name-function #'my/tab-bar-project-name)
+(setq tab-bar-show t)              ; always show the bar, even with one tab
+(tab-bar-mode 1)
+
+;; "Raised button" look (tuned for Zenburn): the active tab is a padded,
+;; faintly-bordered cap on a recessed strip; inactive tabs are flat and
+;; dim.  The inactive box matches its own background so every tab keeps
+;; the same size and the bar never jumps on selection change.
+(set-face-attribute 'tab-bar nil
+                    :background "#2B2B2B" :foreground "#656555" :box nil)
+(set-face-attribute 'tab-bar-tab nil
+                    :background "#4F4F4F" :foreground "#DCDCCC" :weight 'bold
+                    :box '(:line-width (8 . 3) :color "#6F6F6F"))
+(set-face-attribute 'tab-bar-tab-inactive nil
+                    :background "#2B2B2B" :foreground "#656555" :weight 'normal
+                    :box '(:line-width (8 . 3) :color "#2B2B2B"))
+
 ;; Mac: Command key as Meta
 (setq mac-command-modifier 'meta)
 (setq mac-option-modifier 'super)
