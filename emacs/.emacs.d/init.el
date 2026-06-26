@@ -246,7 +246,8 @@ window's buffer and stays correct while the minibuffer is active."
 (use-package eglot
   :ensure nil                      ; built-in; do not fetch from MELPA
   :bind (:map eglot-mode-map
-              ("M-T" . eglot-find-typeDefinition))   ; M-Shift-t: go to type definition
+              ("M-T"   . eglot-find-typeDefinition)   ; M-Shift-t: go to type definition
+              ("C-c ." . eglot-code-actions))          ; Cmd-. equivalent: quick fix / add import
   :hook ((typescript-ts-mode . eglot-ensure)
          (tsx-ts-mode        . eglot-ensure)))
 
