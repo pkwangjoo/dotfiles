@@ -328,6 +328,23 @@ window's buffer and stays correct while the minibuffer is active."
               ("C-c z c" . treesit-fold-close)))
 
 ;; ============================================================
+;; Scheme / Racket (Geiser)
+;; ============================================================
+;; Geiser is a generic Scheme REPL/IDE; geiser-racket is its Racket
+;; backend.  It drives the `racket' binary (installed via Homebrew
+;; cask); exec-path-from-shell makes that binary visible to GUI Emacs.
+;; geiser-mode is a minor mode layered on scheme-mode: opening a .rkt
+;; file activates it, and `C-c C-z' starts or visits the REPL.
+
+(use-package geiser
+  :custom
+  (geiser-default-implementation 'racket)
+  (geiser-active-implementations '(racket)))
+
+(use-package geiser-racket
+  :after geiser)
+
+;; ============================================================
 ;; Reload configuration from disk
 ;; ============================================================
 
