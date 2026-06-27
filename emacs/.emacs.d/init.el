@@ -146,7 +146,9 @@
   (setq auto-save-file-name-transforms
         `((".*" ,auto-save-dir t))))
 
-
+;; Line numbers (vim-style: current line absolute, others relative)
+(setq display-line-numbers-type 'relative)
+(global-display-line-numbers-mode 1)
 
 ;; Matching parens
 (show-paren-mode 1)
