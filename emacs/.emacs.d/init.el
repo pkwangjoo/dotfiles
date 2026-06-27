@@ -13,6 +13,12 @@
 (require 'use-package)
 (setq use-package-always-ensure t)
 
+;; Keep Customize's auto-generated settings out of this file; load them
+;; from custom.el so init.el stays purely hand-authored.
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+(when (file-exists-p custom-file)
+  (load custom-file))
+
 ;; Ivy + Counsel + Swiper
 (use-package ivy
   :diminish
@@ -64,10 +70,10 @@
   :config
   (exec-path-from-shell-initialize))
 
-;; Zenburn theme (low-contrast dark theme)
-(use-package zenburn-theme
+;; Gruvbox theme (retro-groove dark theme)
+(use-package gruvbox-theme
   :config
-  (load-theme 'zenburn t))
+  (load-theme 'gruvbox-dark-medium t))
 
 ;; ============================================================
 ;; Markdown: document-style reading view
@@ -79,6 +85,13 @@
 (set-face-attribute 'variable-pitch nil :family "Helvetica Neue" :height 160)
 
 (use-package markdown-mode
+  :preface
+  (defun my/markdown-reading-setup ()
+    "In-buffer document reading view for markdown."
+    (display-line-numbers-mode -1)             ; no line numbers while reading
+    (visual-line-mode 1)                       ; soft wrap on word boundaries
+    (setq-local line-spacing 0.2)              ; looser leading
+    (markdown-display-inline-images))          ; render local inline images
   :mode (("\\.md\\'"       . markdown-mode)
          ("\\.markdown\\'" . markdown-mode))
   :custom
@@ -86,14 +99,7 @@
   (markdown-hide-urls t)                       ; show link text, hide the URL
   (markdown-header-scaling t)                  ; h1 > h2 > h3 ...
   (markdown-fontify-code-blocks-natively t)    ; syntax-highlight fenced code
-  :hook (markdown-mode . my/markdown-reading-setup)
-  :config
-  (defun my/markdown-reading-setup ()
-    "In-buffer document reading view for markdown."
-    (display-line-numbers-mode -1)             ; no line numbers while reading
-    (visual-line-mode 1)                       ; soft wrap on word boundaries
-    (setq-local line-spacing 0.2)              ; looser leading
-    (markdown-display-inline-images)))         ; render local inline images
+  :hook (markdown-mode . my/markdown-reading-setup))
 
 (use-package mixed-pitch
   :hook (markdown-mode . mixed-pitch-mode)
@@ -112,50 +118,15 @@
   (visual-fill-column-width 90)
   (visual-fill-column-center-text t))
 
+;; ============================================================
+;; Core editor defaults & UI
+;; ============================================================
+
 ;; Cleaner UI
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 (setq inhibit-startup-screen t)
-
-;; ============================================================
-;; Tab bar: project-named workspace tabs
-;; ============================================================
-;; One frame-level tab per workspace.  The tab is named after the
-;; projectile project root folder of the selected window's buffer,
-;; falling back to the buffer name when that buffer is not inside a
-;; project.  The face tweaks must run after the theme loads so they
-;; win over Zenburn's own tab-bar faces.
-
-(defun my/tab-bar-project-name ()
-  "Tab name: projectile project root folder, else buffer name.
-Mirrors `tab-bar-tab-name-current' so the name tracks the selected
-window's buffer and stays correct while the minibuffer is active."
-  (let ((buffer (window-buffer (or (minibuffer-selected-window)
-                                   (and (window-minibuffer-p)
-                                        (get-mru-window))))))
-    (with-current-buffer buffer
-      (if-let ((root (and (fboundp 'projectile-project-root)
-                          (projectile-project-root))))
-          (file-name-nondirectory (directory-file-name root))
-        (buffer-name buffer)))))
-
-(setq tab-bar-tab-name-function #'my/tab-bar-project-name)
-(setq tab-bar-show t)              ; always show the bar, even with one tab
-(tab-bar-mode 1)
-
-;; "Raised button" look (tuned for Zenburn): the active tab is a padded,
-;; faintly-bordered cap on a recessed strip; inactive tabs are flat and
-;; dim.  The inactive box matches its own background so every tab keeps
-;; the same size and the bar never jumps on selection change.
-(set-face-attribute 'tab-bar nil
-                    :background "#2B2B2B" :foreground "#656555" :box nil)
-(set-face-attribute 'tab-bar-tab nil
-                    :background "#4F4F4F" :foreground "#DCDCCC" :weight 'bold
-                    :box '(:line-width (8 . 3) :color "#6F6F6F"))
-(set-face-attribute 'tab-bar-tab-inactive nil
-                    :background "#2B2B2B" :foreground "#656555" :weight 'normal
-                    :box '(:line-width (8 . 3) :color "#2B2B2B"))
 
 ;; Mac: Command key as Meta
 (setq mac-command-modifier 'meta)
@@ -175,15 +146,15 @@ window's buffer and stays correct while the minibuffer is active."
   (setq auto-save-file-name-transforms
         `((".*" ,auto-save-dir t))))
 
-;; Line numbers and column
-(global-display-line-numbers-mode 1)
-(column-number-mode 1)
+
 
 ;; Matching parens
 (show-paren-mode 1)
 
 ;; Auto-insert the closing ) ] } (and quote string-delimiters per mode syntax)
 (electric-pair-mode 1)
+
+
 
 ;; ============================================================
 ;; Keep the cursor centered when paging with C-v / M-v
@@ -221,6 +192,46 @@ window's buffer and stays correct while the minibuffer is active."
 
 ;; Short yes/no prompts
 (defalias 'yes-or-no-p 'y-or-n-p)
+
+;; ============================================================
+;; Tab bar: project-named workspace tabs
+;; ============================================================
+;; One frame-level tab per workspace.  The tab is named after the
+;; projectile project root folder of the selected window's buffer,
+;; falling back to the buffer name when that buffer is not inside a
+;; project.  The face tweaks must run after the theme loads so they
+;; win over gruvbox's own tab-bar faces.
+
+(defun my/tab-bar-project-name ()
+  "Tab name: projectile project root folder, else buffer name.
+Mirrors `tab-bar-tab-name-current' so the name tracks the selected
+window's buffer and stays correct while the minibuffer is active."
+  (let ((buffer (window-buffer (or (minibuffer-selected-window)
+                                   (and (window-minibuffer-p)
+                                        (get-mru-window))))))
+    (with-current-buffer buffer
+      (if-let ((root (and (fboundp 'projectile-project-root)
+                          (projectile-project-root))))
+          (file-name-nondirectory (directory-file-name root))
+        (buffer-name buffer)))))
+
+(setq tab-bar-tab-name-function #'my/tab-bar-project-name)
+(setq tab-bar-show t)              ; always show the bar, even with one tab
+(setq tab-bar-new-tab-choice "*scratch*") ; new tabs open scratch, not a fork
+(tab-bar-mode 1)
+
+;; "Raised button" look (tuned for gruvbox): the active tab is a padded,
+;; faintly-bordered cap on a recessed strip; inactive tabs are flat and
+;; dim.  The inactive box matches its own background so every tab keeps
+;; the same size and the bar never jumps on selection change.
+(set-face-attribute 'tab-bar nil
+                    :background "#282828" :foreground "#928374" :box nil)
+(set-face-attribute 'tab-bar-tab nil
+                    :background "#504945" :foreground "#ebdbb2" :weight 'bold
+                    :box '(:line-width (8 . 3) :color "#7c6f64"))
+(set-face-attribute 'tab-bar-tab-inactive nil
+                    :background "#282828" :foreground "#928374" :weight 'normal
+                    :box '(:line-width (8 . 3) :color "#282828"))
 
 ;; ============================================================
 ;; Development: TypeScript / LSP / Lint / Format / Git
@@ -449,22 +460,3 @@ The path is relative to the Projectile project root, prefixed with
 (global-set-key (kbd "C-c f u") #'my/unpin-file)
 
 ;;; init.el ends here
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   '("a5c590aeb7dc5c2b8d36601a4c94a1145e46bd2291571af02807dd7a8552630c"
-     default))
- '(package-selected-packages
-   '(apheleia atom-one-dark-theme corfu counsel-projectile
-              exec-path-from-shell flx flymake-eslint jest-test-mode
-              magit markdown-mode mixed-pitch treesit-fold
-              visual-fill-column zenburn-theme)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
