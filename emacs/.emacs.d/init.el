@@ -119,6 +119,17 @@
   (visual-fill-column-center-text t))
 
 ;; ============================================================
+;; Semantic region selection (expand-region)
+;; ============================================================
+;; The non-modal answer to vim's `vi"` / `vi(` text objects: place point
+;; inside the delimiters and press C-= repeatedly.  Each press grows the
+;; region by one syntactic unit -- inside a string the first expansion
+;; grabs the quoted contents, the next includes the quotes themselves;
+;; the same walk works outward through pairs, sexps, and defuns.
+(use-package expand-region
+  :bind ("C-=" . er/expand-region))
+
+;; ============================================================
 ;; Core editor defaults & UI
 ;; ============================================================
 
