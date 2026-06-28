@@ -14,9 +14,9 @@
      default))
  '(package-selected-packages
    '(apheleia atom-one-dark-theme corfu counsel-projectile
-              exec-path-from-shell flx flymake-eslint jest-test-mode
-              magit markdown-mode mixed-pitch treesit-fold
-              visual-fill-column zenburn-theme)))
+              exec-path-from-shell expand-region flx flymake-eslint
+              jest-test-mode magit markdown-mode mixed-pitch
+              treesit-fold visual-fill-column zenburn-theme)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
