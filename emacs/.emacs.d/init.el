@@ -62,6 +62,11 @@
   :after (counsel projectile)
   :config
   (counsel-projectile-mode 1)
+  ;; Match the query against each candidate's basename rather than its
+  ;; full project-relative path, so `C-c p f' finds files by name.
+  ;; Falls back to path matching only when nothing matches by name.
+  (setq counsel-projectile-find-file-matcher
+        'counsel-projectile-find-file-matcher-basename)
   :bind (("C-c p f"   . counsel-projectile-find-file)
          ("C-c p s r" . counsel-projectile-rg)))
 
