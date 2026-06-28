@@ -13,11 +13,12 @@
 (require 'use-package)
 (setq use-package-always-ensure t)
 
-;; Keep Customize's auto-generated settings out of this file; load them
-;; from custom.el so init.el stays purely hand-authored.
-(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-(when (file-exists-p custom-file)
-  (load custom-file))
+;; Customize writes machine state (package-selected-packages,
+;; custom-safe-themes, etc.) that we don't version-control: this init.el
+;; is the single source of truth, and use-package above auto-installs
+;; everything on a fresh clone.  Send that output to a throwaway temp
+;; file so it never lands in the repo.
+(setq custom-file (make-temp-file "emacs-custom-"))
 
 ;; Ivy + Counsel + Swiper
 (use-package ivy
