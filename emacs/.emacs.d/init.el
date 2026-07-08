@@ -56,6 +56,7 @@
 ;; Project-scoped fuzzy file finder (like VS Code Ctrl+P)
 (use-package projectile
   :diminish
+  :bind ("C-c p e" . projectile-run-eshell)   ; eshell at project root
   :config
   (projectile-mode 1))
 
