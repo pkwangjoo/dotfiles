@@ -72,6 +72,15 @@
   :bind (("C-c p f"   . counsel-projectile-find-file)
          ("C-c p s r" . counsel-projectile-rg)))
 
+;; --- Eshell: run interactive CLIs in a term buffer ----------
+;; Eshell is not a terminal emulator: CLIs that draw arrow-key menus
+;; (inquirer-style prompts) can't redraw their UI, and arrow keys are
+;; taken by eshell history instead of reaching the process.  Declaring
+;; `npm run' a visual subcommand makes eshell run those commands in a
+;; `term' buffer, where the menu renders and navigates normally.
+(with-eval-after-load 'em-term
+  (add-to-list 'eshell-visual-subcommands '("npm" "run")))
+
 ;; Inherit env variables from shell (needed for GUI Emacs on macOS)
 (use-package exec-path-from-shell
   :config
