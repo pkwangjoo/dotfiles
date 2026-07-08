@@ -190,6 +190,25 @@
 ;; Auto-insert the closing ) ] } (and quote string-delimiters per mode syntax)
 (electric-pair-mode 1)
 
+;; --- Word deletion that leaves the kill ring alone ----------
+;; M-d / M-DEL normally *kill* the word, shadowing an earlier copy on
+;; the kill ring, so copy -> delete -> yank pastes the deleted word.
+;; These variants use `delete-region', so the copy stays on top.
+(defun my/delete-word (arg)
+  "Delete a word forward without saving it to the kill ring.
+With prefix ARG, delete that many words (backward if negative)."
+  (interactive "p")
+  (delete-region (point) (progn (forward-word arg) (point))))
+
+(defun my/backward-delete-word (arg)
+  "Delete a word backward without saving it to the kill ring.
+With prefix ARG, delete that many words."
+  (interactive "p")
+  (my/delete-word (- arg)))
+
+(global-set-key (kbd "M-d")   #'my/delete-word)
+(global-set-key (kbd "M-DEL") #'my/backward-delete-word)
+
 
 
 ;; ============================================================
