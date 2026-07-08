@@ -343,7 +343,15 @@ window's buffer and stays correct while the minibuffer is active."
 ;; so this just installs the package and turns it on in TS buffers.
 (use-package jest-test-mode
   :hook ((typescript-ts-mode . jest-test-mode)
-         (tsx-ts-mode        . jest-test-mode)))
+         (tsx-ts-mode        . jest-test-mode))
+  :custom
+  ;; jest-test-mode runs tests through `compile', which by default runs
+  ;; `save-some-buffers' over every modified buffer in the session --
+  ;; hence the save prompts for unrelated directories.  Same policy as
+  ;; `magit-save-repository-buffers' above: edits are saved by hand, so
+  ;; never prompt and never write buffers from here.  (This variable is
+  ;; global, so it also silences any other `compile' invocation.)
+  (compilation-save-buffers-predicate #'ignore))
 
 ;; --- treesit-fold (tree-sitter code folding) ---------------
 ;; Collapse { ... } blocks (also functions, comments, JSX) to trace control
