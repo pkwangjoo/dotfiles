@@ -163,6 +163,13 @@
   (setq auto-save-file-name-transforms
         `((".*" ,auto-save-dir t))))
 
+;; --- Keep buffers in sync with on-disk edits ---------------
+;; Claude and other external tools edit files on disk; auto-revert pulls those
+;; changes into open buffers automatically.  It deliberately skips buffers with
+;; unsaved modifications, so an in-progress edit is never overwritten.
+(setq auto-revert-verbose nil)   ; silence the "Reverting buffer…" echo
+(global-auto-revert-mode 1)
+
 ;; Line numbers (vim-style: current line absolute, others relative)
 (setq display-line-numbers-type 'relative)
 (global-display-line-numbers-mode 1)
@@ -321,7 +328,14 @@ window's buffer and stays correct while the minibuffer is active."
 ;; --- Magit (Git interface) ---------------------------------
 (use-package magit
   :bind (("C-x g"   . magit-status)
-         ("C-c g b" . magit-blame)))
+         ("C-c g b" . magit-blame))
+  :custom
+  ;; Don't run `save-some-buffers' on `magit-status' refresh.  The user
+  ;; always saves intentional edits by hand, so their work is already on
+  ;; disk by the time `C-x g' runs; this kills the "Save file?" nag and
+  ;; guarantees magit can never write a stale buffer over Claude's disk
+  ;; edits.
+  (magit-save-repository-buffers nil))
 
 ;; --- Jest (run tests from the buffer) ----------------------
 ;; Defaults already give us `npx jest` and the `C-c C-t` keymap,
@@ -420,6 +434,39 @@ The path is relative to the Projectile project root, prefixed with
           (message "Copied: %s" ref))))))
 
 (global-set-key (kbd "C-c @") #'my/copy-claude-file-path)
+
+;; --- Discard unsaved edits, taking the on-disk version -----
+(defun my/discard-unsaved-changes ()
+  "Revert every modified file-visiting buffer to its on-disk contents.
+Throws away in-Emacs edits, taking whatever is on disk (e.g. Claude's
+changes).  Asks once, listing the affected buffers, before acting.
+Buffers whose file no longer exists on disk are skipped and reported."
+  (interactive)
+  (let ((modified (seq-filter (lambda (buf)
+                                (and (buffer-file-name buf)
+                                     (buffer-modified-p buf)))
+                              (buffer-list))))
+    (cond
+     ((null modified)
+      (message "No unsaved changes to discard."))
+     ((yes-or-no-p
+       (format "Discard unsaved changes in: %s? "
+               (mapconcat #'buffer-name modified ", ")))
+      (let (missing)
+        (dolist (buf modified)
+          (if (file-exists-p (buffer-file-name buf))
+              (with-current-buffer buf
+                (revert-buffer t t t))
+            (push (buffer-name buf) missing)))
+        (message "Discarded changes in %d buffer(s)%s"
+                 (- (length modified) (length missing))
+                 (if missing
+                     (format "; skipped (file gone): %s"
+                             (mapconcat #'identity missing ", "))
+                   ""))))
+     (t (message "Cancelled.")))))
+
+(global-set-key (kbd "C-c g d") #'my/discard-unsaved-changes)
 
 ;; ============================================================
 ;; Pinned files: persistent, additive quick-access list
