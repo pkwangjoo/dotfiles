@@ -56,6 +56,8 @@
 ;; Project-scoped fuzzy file finder (like VS Code Ctrl+P)
 (use-package projectile
   :diminish
+  :demand t   ; :bind implies deferred loading; load at startup anyway so
+              ; counsel-projectile's `:after' gate opens and binds C-c p f
   :bind ("C-c p e" . projectile-run-eshell)   ; eshell at project root
   :config
   (projectile-mode 1))
