@@ -354,7 +354,10 @@ window's buffer and stays correct while the minibuffer is active."
   :config
   ;; Map the tree-sitter modes to apheleia's prettier formatter.
   (setf (alist-get 'typescript-ts-mode apheleia-mode-alist) 'prettier)
-  (setf (alist-get 'tsx-ts-mode        apheleia-mode-alist) 'prettier))
+  (setf (alist-get 'tsx-ts-mode        apheleia-mode-alist) 'prettier)
+  ;; raco fmt reads a file argument and prints the result to stdout.
+  (setf (alist-get 'raco-fmt apheleia-formatters) '("raco" "fmt" file))
+  (setf (alist-get 'scheme-mode apheleia-mode-alist) 'raco-fmt))
 
 ;; --- Magit (Git interface) ---------------------------------
 (use-package magit
