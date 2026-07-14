@@ -88,10 +88,10 @@
   :config
   (exec-path-from-shell-initialize))
 
-;; Gruvbox theme (retro-groove dark theme)
-(use-package gruvbox-theme
+;; Solarized theme (precision colors, dark variant)
+(use-package solarized-theme
   :config
-  (load-theme 'gruvbox-dark-medium t))
+  (load-theme 'solarized-dark t))
 
 ;; ============================================================
 ;; Markdown: document-style reading view
@@ -257,7 +257,7 @@ With prefix ARG, delete that many words."
 ;; projectile project root folder of the selected window's buffer,
 ;; falling back to the buffer name when that buffer is not inside a
 ;; project.  The face tweaks must run after the theme loads so they
-;; win over gruvbox's own tab-bar faces.
+;; win over solarized's own tab-bar faces.
 
 (defun my/tab-bar-project-name ()
   "Tab name: projectile project root folder, else buffer name.
@@ -277,18 +277,18 @@ window's buffer and stays correct while the minibuffer is active."
 (setq tab-bar-new-tab-choice "*scratch*") ; new tabs open scratch, not a fork
 (tab-bar-mode 1)
 
-;; "Raised button" look (tuned for gruvbox): the active tab is a padded,
-;; faintly-bordered cap on a recessed strip; inactive tabs are flat and
-;; dim.  The inactive box matches its own background so every tab keeps
-;; the same size and the bar never jumps on selection change.
+;; "Raised button" look (tuned for solarized-dark): the active tab is a
+;; padded, faintly-bordered cap on a recessed strip; inactive tabs are
+;; flat and dim.  The inactive box matches its own background so every
+;; tab keeps the same size and the bar never jumps on selection change.
 (set-face-attribute 'tab-bar nil
-                    :background "#282828" :foreground "#928374" :box nil)
+                    :background "#002b36" :foreground "#586e75" :box nil)
 (set-face-attribute 'tab-bar-tab nil
-                    :background "#504945" :foreground "#ebdbb2" :weight 'bold
-                    :box '(:line-width (8 . 3) :color "#7c6f64"))
+                    :background "#073642" :foreground "#93a1a1" :weight 'bold
+                    :box '(:line-width (8 . 3) :color "#586e75"))
 (set-face-attribute 'tab-bar-tab-inactive nil
-                    :background "#282828" :foreground "#928374" :weight 'normal
-                    :box '(:line-width (8 . 3) :color "#282828"))
+                    :background "#002b36" :foreground "#586e75" :weight 'normal
+                    :box '(:line-width (8 . 3) :color "#002b36"))
 
 ;; ============================================================
 ;; Development: TypeScript / LSP / Lint / Format / Git
