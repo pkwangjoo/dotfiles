@@ -88,10 +88,10 @@
   :config
   (exec-path-from-shell-initialize))
 
-;; Solarized theme (precision colors, dark variant)
+;; Solarized theme (zenburn palette on the solarized engine)
 (use-package solarized-theme
   :config
-  (load-theme 'solarized-dark t))
+  (load-theme 'solarized-zenburn t))
 
 ;; ============================================================
 ;; Markdown: document-style reading view
@@ -277,18 +277,18 @@ window's buffer and stays correct while the minibuffer is active."
 (setq tab-bar-new-tab-choice "*scratch*") ; new tabs open scratch, not a fork
 (tab-bar-mode 1)
 
-;; "Raised button" look (tuned for solarized-dark): the active tab is a
-;; padded, faintly-bordered cap on a recessed strip; inactive tabs are
+;; "Raised button" look (tuned for solarized-zenburn): the active tab is
+;; a padded, faintly-bordered cap on a recessed strip; inactive tabs are
 ;; flat and dim.  The inactive box matches its own background so every
 ;; tab keeps the same size and the bar never jumps on selection change.
 (set-face-attribute 'tab-bar nil
-                    :background "#002b36" :foreground "#586e75" :box nil)
+                    :background "#3F3F3F" :foreground "#878777" :box nil)
 (set-face-attribute 'tab-bar-tab nil
-                    :background "#073642" :foreground "#93a1a1" :weight 'bold
-                    :box '(:line-width (8 . 3) :color "#586e75"))
+                    :background "#4F4F4F" :foreground "#DCDCCC" :weight 'bold
+                    :box '(:line-width (8 . 3) :color "#6F6F6F"))
 (set-face-attribute 'tab-bar-tab-inactive nil
-                    :background "#002b36" :foreground "#586e75" :weight 'normal
-                    :box '(:line-width (8 . 3) :color "#002b36"))
+                    :background "#3F3F3F" :foreground "#878777" :weight 'normal
+                    :box '(:line-width (8 . 3) :color "#3F3F3F"))
 
 ;; ============================================================
 ;; Development: TypeScript / LSP / Lint / Format / Git
