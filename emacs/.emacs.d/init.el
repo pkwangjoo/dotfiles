@@ -369,28 +369,21 @@ window's buffer and stays correct while the minibuffer is active."
   ;; disk by the time `C-x g' runs; this kills the "Save file?" nag and
   ;; guarantees magit can never write a stale buffer over Claude's disk
   ;; edits.
-  (magit-save-repository-buffers nil))
-
-;; --- magit-delta (readable, syntax-highlighted diffs) -------
-;; Pipe magit's diffs through the `delta' pager (brew install git-delta).
-;; Zenburn's own magit-diff faces are bright solid blocks with no
-;; foreground contrast; delta replaces them with syntax-highlighted
-;; code on subtle green/red backgrounds.
-(use-package magit-delta
-  :hook (magit-mode . magit-delta-mode)
+  (magit-save-repository-buffers nil)
+  ;; Word-level highlighting inside changed lines.
+  (magit-diff-refine-hunk 'all)
   :config
-  ;; Delta derives added/removed line backgrounds from the syntax
-  ;; theme's near-black background, which is nearly invisible against
-  ;; zenburn's #3F3F3F.  Pass explicit backgrounds tuned to zenburn;
-  ;; the *-emph styles mark the changed words within a line.
-  (setq magit-delta-delta-args
-        `("--max-line-distance" "0.6"
-          "--true-color" ,(if xterm-color--support-truecolor "always" "never")
-          "--color-only"
-          "--plus-style"       "syntax #2F4F2F"
-          "--plus-emph-style"  "syntax #3F6F3F"
-          "--minus-style"      "syntax #4F2F2F"
-          "--minus-emph-style" "syntax #703A3A")))
+  ;; Zenburn's magit-diff faces are solid bright blocks with no
+  ;; foreground contrast; replace them with darker green/red tints and
+  ;; light text.  The -highlight variants style the section at point.
+  (set-face-attribute 'magit-diff-added nil
+                      :background "#2F4F2F" :foreground "#BFEBBF")
+  (set-face-attribute 'magit-diff-added-highlight nil
+                      :background "#3F6F3F" :foreground "#CFFFCF")
+  (set-face-attribute 'magit-diff-removed nil
+                      :background "#4F2F2F" :foreground "#ECB3B3")
+  (set-face-attribute 'magit-diff-removed-highlight nil
+                      :background "#703A3A" :foreground "#FFC3C3"))
 
 ;; --- Jest (run tests from the buffer) ----------------------
 ;; Defaults already give us `npx jest` and the `C-c C-t` keymap,
