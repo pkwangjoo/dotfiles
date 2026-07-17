@@ -377,7 +377,20 @@ window's buffer and stays correct while the minibuffer is active."
 ;; foreground contrast; delta replaces them with syntax-highlighted
 ;; code on subtle green/red backgrounds.
 (use-package magit-delta
-  :hook (magit-mode . magit-delta-mode))
+  :hook (magit-mode . magit-delta-mode)
+  :config
+  ;; Delta derives added/removed line backgrounds from the syntax
+  ;; theme's near-black background, which is nearly invisible against
+  ;; zenburn's #3F3F3F.  Pass explicit backgrounds tuned to zenburn;
+  ;; the *-emph styles mark the changed words within a line.
+  (setq magit-delta-delta-args
+        `("--max-line-distance" "0.6"
+          "--true-color" ,(if xterm-color--support-truecolor "always" "never")
+          "--color-only"
+          "--plus-style"       "syntax #2F4F2F"
+          "--plus-emph-style"  "syntax #3F6F3F"
+          "--minus-style"      "syntax #4F2F2F"
+          "--minus-emph-style" "syntax #703A3A")))
 
 ;; --- Jest (run tests from the buffer) ----------------------
 ;; Defaults already give us `npx jest` and the `C-c C-t` keymap,
