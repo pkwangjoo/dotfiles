@@ -371,6 +371,14 @@ window's buffer and stays correct while the minibuffer is active."
   ;; edits.
   (magit-save-repository-buffers nil))
 
+;; --- magit-delta (readable, syntax-highlighted diffs) -------
+;; Pipe magit's diffs through the `delta' pager (brew install git-delta).
+;; Zenburn's own magit-diff faces are bright solid blocks with no
+;; foreground contrast; delta replaces them with syntax-highlighted
+;; code on subtle green/red backgrounds.
+(use-package magit-delta
+  :hook (magit-mode . magit-delta-mode))
+
 ;; --- Jest (run tests from the buffer) ----------------------
 ;; Defaults already give us `npx jest` and the `C-c C-t` keymap,
 ;; so this just installs the package and turns it on in TS buffers.
