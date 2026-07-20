@@ -57,7 +57,7 @@
 (use-package projectile
   :diminish
   :demand t   ; :bind implies deferred loading; load at startup anyway so
-              ; counsel-projectile's `:after' gate opens and binds C-c p f
+                                        ; counsel-projectile's `:after' gate opens and binds C-c p f
   :bind ("C-c p e" . projectile-run-eshell)   ; eshell at project root
   :config
   (projectile-mode 1))
@@ -356,7 +356,7 @@ window's buffer and stays correct while the minibuffer is active."
   (setf (alist-get 'typescript-ts-mode apheleia-mode-alist) 'prettier)
   (setf (alist-get 'tsx-ts-mode        apheleia-mode-alist) 'prettier)
   ;; raco fmt reads a file argument and prints the result to stdout.
-  (setf (alist-get 'raco-fmt apheleia-formatters) '("raco" "fmt" file))
+  ;; (setf (alist-get 'raco-fmt apheleia-formatters) '("raco" "fmt" file))
   (setf (alist-get 'scheme-mode apheleia-mode-alist) 'raco-fmt))
 
 ;; --- Magit (Git interface) ---------------------------------
