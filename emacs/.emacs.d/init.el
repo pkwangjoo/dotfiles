@@ -339,7 +339,9 @@ window's buffer and stays correct while the minibuffer is active."
   (corfu-cycle t)
   :config
   ;; No in-buffer completion popup in org-mode buffers.
-  (add-hook 'org-mode-hook (lambda () (corfu-mode -1))))
+  (add-hook 'org-mode-hook (lambda () (corfu-mode -1)))
+  ;; No completion popup in the scratch buffer (lisp-interaction-mode).
+  (add-hook 'lisp-interaction-mode-hook (lambda () (corfu-mode -1))))
 
 ;; --- ESLint via Flymake (project-local eslint) -------------
 (use-package flymake-eslint
