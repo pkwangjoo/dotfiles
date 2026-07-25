@@ -157,9 +157,9 @@
 (scroll-bar-mode -1)
 (setq inhibit-startup-screen t)
 
-;; Mac: Command key as Meta
+;; Mac: Command and Option keys as Meta
 (setq mac-command-modifier 'meta)
-(setq mac-option-modifier 'super)
+(setq mac-option-modifier 'meta)
 
 ;; Basic defaults
 (setq ring-bell-function 'ignore)
