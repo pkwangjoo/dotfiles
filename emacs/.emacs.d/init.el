@@ -294,14 +294,22 @@ window's buffer and stays correct while the minibuffer is active."
 ;; Development: TypeScript / LSP / Lint / Format / Git
 ;; ============================================================
 
-;; --- Tree-sitter grammars for TypeScript -------------------
-;; One-time compile of the TS/TSX grammars (needs cc + git on PATH).
+;; --- Tree-sitter grammars ----------------------------------
+;; One-time compile of grammars (needs cc + git on PATH).
+;; markdown-inline is used by clojure-ts-mode for docstring rendering.
+;; Its own recipe pins a tag whose parser needs tree-sitter ABI 15,
+;; which this Emacs cannot load (max 14), so the auto-install fails and
+;; retries on every Clojure buffer.  Pin an ABI-14 tag here instead;
+;; the grammar being ready makes clojure-ts-mode skip its recipe.  The
+;; clojure and regex grammars install fine via that auto-install.
 (require 'treesit)                 ; treesit-ready-p is not autoloaded
 (setq treesit-language-source-alist
       '((typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
-        (tsx        "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")))
+        (tsx        "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
+        (markdown-inline "https://github.com/tree-sitter-grammars/tree-sitter-markdown"
+                         "v0.4.1" "tree-sitter-markdown-inline/src")))
 
-(dolist (grammar '(typescript tsx))
+(dolist (grammar '(typescript tsx markdown-inline))
   (unless (treesit-ready-p grammar t)
     (treesit-install-language-grammar grammar)))
 
@@ -310,14 +318,16 @@ window's buffer and stays correct while the minibuffer is active."
 (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
 
 ;; --- Eglot (built-in LSP client) ---------------------------
-;; Eglot already knows to launch typescript-language-server for these modes.
+;; Eglot already knows to launch typescript-language-server and
+;; clojure-lsp for these modes.
 (use-package eglot
   :ensure nil                      ; built-in; do not fetch from MELPA
   :bind (:map eglot-mode-map
               ("M-T"   . eglot-find-typeDefinition)   ; M-Shift-t: go to type definition
               ("C-c ." . eglot-code-actions))          ; Cmd-. equivalent: quick fix / add import
   :hook ((typescript-ts-mode . eglot-ensure)
-         (tsx-ts-mode        . eglot-ensure)))
+         (tsx-ts-mode        . eglot-ensure)
+         (clojure-ts-mode    . eglot-ensure)))
 
 ;; --- Corfu (in-buffer completion popup) --------------------
 (use-package corfu
@@ -415,6 +425,43 @@ window's buffer and stays correct while the minibuffer is active."
               ("C-c z r" . treesit-fold-open-all)
               ("C-c z o" . treesit-fold-open)
               ("C-c z c" . treesit-fold-close)))
+
+;; ============================================================
+;; Clojure (clojure-ts-mode + CIDER)
+;; ============================================================
+;; clojure-ts-mode provides tree-sitter highlighting; it installs its
+;; own grammars on first activation.  CIDER is the Clojure nREPL client
+;; (the Clojure counterpart of Geiser below).  payment-api-cli-bb's
+;; `bb nrepl` task starts the server and writes .nrepl-port; connect
+;; with M-x cider-connect-clj.
+
+(use-package clojure-ts-mode)
+
+;; CIDER pulls in classic clojure-mode, whose autoloads also claim
+;; .clj files; remap the classic modes so the tree-sitter modes always
+;; win regardless of package activation order.
+(add-to-list 'major-mode-remap-alist '(clojure-mode . clojure-ts-mode))
+(add-to-list 'major-mode-remap-alist '(clojurescript-mode . clojure-ts-clojurescript-mode))
+(add-to-list 'major-mode-remap-alist '(clojurec-mode . clojure-ts-clojurec-mode))
+
+;; Babashka scripts: neither package's autoloads claim .bb files.
+(add-to-list 'auto-mode-alist '("\\.bb\\'" . clojure-ts-mode))
+
+(use-package cider)
+
+;; Paredit keeps parens balanced and adds structural editing (slurp,
+;; barf, splice).  It owns delimiter insertion, so the global
+;; electric-pair-mode is switched off locally wherever paredit runs.
+;; Note: paredit's map shadows the global M-d / M-DEL word-delete
+;; bindings with its paren-safe kill-word commands; intentional.
+(use-package paredit
+  :preface
+  (defun my/paredit-setup ()
+    "Enable paredit and hand pairing duties over from electric-pair."
+    (electric-pair-local-mode -1)
+    (enable-paredit-mode))
+  :hook ((clojure-ts-mode . my/paredit-setup)
+         (cider-repl-mode . my/paredit-setup)))
 
 ;; ============================================================
 ;; Scheme / Racket (Geiser)
