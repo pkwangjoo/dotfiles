@@ -24,6 +24,7 @@ custom.el
 /url/
 /.cache/
 recentf
+tramp
 projectile-bookmarks.eld
 pinned-files.eld
 projects
