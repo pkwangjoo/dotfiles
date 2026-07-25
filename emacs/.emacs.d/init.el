@@ -643,6 +643,31 @@ Buffers whose file no longer exists on disk are skipped and reported."
 
 (my/pinned-files-load)
 
+(defun my/add-worktree (wt-name branch-name)
+  (interactive "sWorktree name: \nsBranch-name: ")
+  (let ((default-directory "~/code/payment_functions"))
+    (shell-command-to-string (format "git worktree add ../%s -b %s" wt-name branch-name))
+    (let ((default-directory (expand-file-name wt-name "~/code")))
+      (message default-directory)
+      (async-shell-command "npm i"))
+    (message "ok")))
+
+
+(defun my/remove-worktree ()
+  (interactive)
+  (let ((default-directory "~/code/payment_functions"))
+    (let ((chosen-wt-to-remove (completing-read "choose"
+                                                (seq-filter (lambda (x) (not (string-match-p "payment_functions" x)))
+                                                            (mapcar 
+                                                             (lambda (line) (car (split-string line)))
+                                                             (split-string (shell-command-to-string "git worktree list") "\n" t))))))
+      (async-shell-command (format "git worktree remove %s" chosen-wt-to-remove)))))
+
+
+
+
+
+
 (global-set-key (kbd "C-c f f") #'my/open-pinned-file)
 (global-set-key (kbd "C-c f p") #'my/pin-file)
 (global-set-key (kbd "C-c f u") #'my/unpin-file)
