@@ -313,6 +313,22 @@ window's buffer and stays correct while the minibuffer is active."
   (unless (treesit-ready-p grammar t)
     (treesit-install-language-grammar grammar)))
 
+(use-package tuareg
+  :mode ("\\.ml\\'" . tuareg-mode)
+  :mode ("\\.mli\\'" . tuareg-mode))
+
+(use-package dune
+  :ensure t)
+
+(use-package ocaml-eglot
+  :ensure t
+  :after tuareg
+  :hook
+  (tuareg-mode . ocaml-eglot)
+  (ocaml-eglot . eglot-ensure))
+
+
+
 ;; Use the tree-sitter modes for .ts / .tsx files.
 (add-to-list 'auto-mode-alist '("\\.ts\\'"  . typescript-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
@@ -327,7 +343,8 @@ window's buffer and stays correct while the minibuffer is active."
               ("C-c ." . eglot-code-actions))          ; Cmd-. equivalent: quick fix / add import
   :hook ((typescript-ts-mode . eglot-ensure)
          (tsx-ts-mode        . eglot-ensure)
-         (clojure-ts-mode    . eglot-ensure)))
+         (clojure-ts-mode    . eglot-ensure)
+         (tuareg-mode        . eglot-ensure)))
 
 ;; --- Corfu (in-buffer completion popup) --------------------
 (use-package corfu
@@ -369,7 +386,8 @@ window's buffer and stays correct while the minibuffer is active."
   (setf (alist-get 'tsx-ts-mode        apheleia-mode-alist) 'prettier)
   ;; raco fmt reads a file argument and prints the result to stdout.
   ;; (setf (alist-get 'raco-fmt apheleia-formatters) '("raco" "fmt" file))
-  (setf (alist-get 'scheme-mode apheleia-mode-alist) 'raco-fmt))
+  (setf (alist-get 'scheme-mode apheleia-mode-alist) 'raco-fmt)
+  (setf (alist-get 'tuareg-mode apheleia-mode-alist) 'ocamlformat))
 
 ;; --- Magit (Git interface) ---------------------------------
 (use-package magit
