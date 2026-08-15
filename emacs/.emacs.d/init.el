@@ -320,12 +320,6 @@ window's buffer and stays correct while the minibuffer is active."
 (use-package dune
   :ensure t)
 
-(use-package ocaml-eglot
-  :ensure t
-  :after tuareg
-  :hook
-  (tuareg-mode . ocaml-eglot)
-  (ocaml-eglot . eglot-ensure))
 
 
 
