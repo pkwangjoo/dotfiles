@@ -26,5 +26,6 @@ custom.el
 recentf
 tramp
 projectile-bookmarks.eld
+projectile-frecency.eld
 pinned-files.eld
 projects
