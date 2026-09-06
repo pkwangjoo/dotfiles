@@ -72,7 +72,15 @@
   (setq counsel-projectile-find-file-matcher
         'counsel-projectile-find-file-matcher-basename)
   :bind (("C-c p f"   . counsel-projectile-find-file)
-         ("C-c p s r" . counsel-projectile-rg)))
+         ;; counsel-projectile-rg calls projectile-ignored-files-rel, which
+         ;; newer projectile releases removed as part of a rewrite of the
+         ;; ignore-pattern engine; counsel-projectile itself hasn't been
+         ;; updated since 2021, so the wrapper is permanently broken.  Go
+         ;; straight to counsel-rg (still maintained, part of core
+         ;; counsel) rooted at the projectile project root instead.
+         ("C-c p s r" . (lambda ()
+                          (interactive)
+                          (counsel-rg nil (projectile-project-root))))))
 
 ;; --- Eshell: run interactive CLIs in a term buffer ----------
 ;; Eshell is not a terminal emulator: CLIs that draw arrow-key menus
