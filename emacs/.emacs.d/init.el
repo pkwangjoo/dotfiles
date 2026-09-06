@@ -21,6 +21,7 @@
 (require 'init-typescript)   ; TS/TSX: LSP, ESLint, Prettier, Jest, folding
 (require 'init-lisp)         ; Clojure (CIDER) + Scheme/Racket (Geiser) + paredit
 (require 'init-ocaml)        ; OCaml: tuareg, dune, ocamlformat
+(require 'init-haskell)      ; Haskell: haskell-mode, HLS via eglot, fourmolu
 (require 'init-commands)     ; reload-init, claude paths, discard-unsaved, pinned files
 
 ;;; init.el ends here
