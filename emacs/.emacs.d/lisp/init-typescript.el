@@ -8,6 +8,18 @@
 (add-to-list 'auto-mode-alist '("\\.ts\\'"  . typescript-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
 
+(defun my/typescript-fontify-member-properties ()
+  (setq-local treesit-font-lock-settings
+              (append treesit-font-lock-settings
+                      (treesit-font-lock-rules
+                       :language (treesit-parser-language treesit-primary-parser)
+                       :feature 'property
+                       '((member_expression
+                          property: (property_identifier) @font-lock-property-use-face)))))
+  (treesit-font-lock-recompute-features))
+
+(add-hook 'typescript-ts-base-mode-hook #'my/typescript-fontify-member-properties)
+
 ;; --- Eglot ------------------------------------------------
 ;; Eglot already knows to launch typescript-language-server for these modes.
 (add-hook 'typescript-ts-mode-hook #'eglot-ensure)

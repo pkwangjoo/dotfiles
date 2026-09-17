@@ -26,6 +26,8 @@
   (unless (treesit-ready-p grammar t)
     (treesit-install-language-grammar grammar)))
 
+(setq treesit-font-lock-level 4)
+
 ;; ============================================================
 ;; Eglot (built-in LSP client)
 ;; ============================================================
