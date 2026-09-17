@@ -7,9 +7,6 @@
          ("\\.mli\\'" . tuareg-mode))
   :hook (tuareg-mode . eglot-ensure))
 
-(use-package dune
-  :ensure t)
-
 ;; Format-on-save with ocamlformat (apheleia ships this formatter).
 (with-eval-after-load 'apheleia
   (setf (alist-get 'tuareg-mode apheleia-mode-alist) 'ocamlformat))

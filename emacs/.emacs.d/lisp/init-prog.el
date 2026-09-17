@@ -38,6 +38,47 @@
               ("M-T"   . eglot-find-typeDefinition)   ; M-Shift-t: go to type definition
               ("C-c ." . eglot-code-actions)))         ; Cmd-. equivalent: quick fix / add import
 
+(use-package eldoc
+  :ensure nil
+  :custom
+  (eldoc-echo-area-use-multiline-p 5)
+  (eldoc-echo-area-prefer-doc-buffer 'maybe)
+  (eldoc-echo-area-display-truncation-message nil)
+  (max-mini-window-height 0.35)
+  :bind ("C-c d" . eldoc-doc-buffer))
+
+;; --- Xref: hide references in test files -------------------
+;; M-? (xref-find-references) drops matches whose file path looks
+;; like a test file. Toggle with M-x my/toggle-xref-test-refs.
+(defvar my/xref-hide-test-refs t
+  "When non-nil, M-? hides references in test files.")
+
+(defun my/xref-test-ref-p (item)
+  "Return non-nil if xref ITEM points into a test file."
+  (string-match-p "\\(?:\\.test\\.\\|\\.spec\\.\\|__tests__\\|/tests?/\\)"
+                  (xref-location-group (xref-item-location item))))
+
+(defun my/xref-show-refs-filtered (fetcher alist)
+  "Show xrefs from FETCHER, minus test-file hits when the toggle is on.
+Also used by `project-find-regexp' and `xref-find-apropos', so the
+filter applies there too while enabled."
+  (xref--show-xref-buffer
+   (if my/xref-hide-test-refs
+       (lambda ()
+         (let ((refs (funcall fetcher)))
+           ;; If *all* refs are in tests, show them rather than nothing.
+           (or (seq-remove #'my/xref-test-ref-p refs) refs)))
+     fetcher)
+   alist))
+
+(setq xref-show-xrefs-function #'my/xref-show-refs-filtered)
+
+(defun my/toggle-xref-test-refs ()
+  "Toggle whether M-? shows references in test files."
+  (interactive)
+  (setq my/xref-hide-test-refs (not my/xref-hide-test-refs))
+  (message "Test references now %s" (if my/xref-hide-test-refs "hidden" "shown")))
+
 ;; ============================================================
 ;; Corfu (in-buffer completion popup)
 ;; ============================================================
@@ -49,8 +90,7 @@
   (corfu-auto-prefix 2)
   (corfu-cycle t)
   :config
-  ;; No in-buffer completion popup in org-mode buffers.
-  (add-hook 'org-mode-hook (lambda () (corfu-mode -1)))
+  (add-hook 'text-mode-hook (lambda () (corfu-mode -1)))
   ;; No completion popup in the scratch buffer (lisp-interaction-mode).
   (add-hook 'lisp-interaction-mode-hook (lambda () (corfu-mode -1))))
 
