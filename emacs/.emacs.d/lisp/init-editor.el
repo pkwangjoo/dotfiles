@@ -4,12 +4,12 @@
 ;; Theme
 ;; ============================================================
 
-;; Zenburn theme (low-contrast dark theme).  Loaded early so later
-;; modules' `set-face-attribute' tweaks (tab-bar, magit) win over
-;; zenburn's own faces.
-(use-package zenburn-theme
+(use-package atom-one-dark-theme
+  :custom-face
+  (font-lock-operator-face ((t (:foreground "#56B6C2"))))
+  (font-lock-number-face ((t (:foreground "#D19A66"))))
   :config
-  (load-theme 'zenburn t))
+  (load-theme 'atom-one-dark t))
 
 ;; ============================================================
 ;; Core editor defaults & UI

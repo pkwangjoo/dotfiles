@@ -121,17 +121,14 @@ filter applies there too while enabled."
   ;; Word-level highlighting inside changed lines.
   (magit-diff-refine-hunk 'all)
   :config
-  ;; Zenburn's magit-diff faces are solid bright blocks with no
-  ;; foreground contrast; replace them with darker green/red tints and
-  ;; light text.  The -highlight variants style the section at point.
   (set-face-attribute 'magit-diff-added nil
-                      :background "#2F4F2F" :foreground "#BFEBBF")
+                      :background "#3A4A2E" :foreground "#C6DEB5")
   (set-face-attribute 'magit-diff-added-highlight nil
-                      :background "#3F6F3F" :foreground "#CFFFCF")
+                      :background "#546B43" :foreground "#D8E8CC")
   (set-face-attribute 'magit-diff-removed nil
-                      :background "#4F2F2F" :foreground "#ECB3B3")
+                      :background "#4C2528" :foreground "#EEAEB3")
   (set-face-attribute 'magit-diff-removed-highlight nil
-                      :background "#703A3A" :foreground "#FFC3C3"))
+                      :background "#70363A" :foreground "#F3C7CB"))
 
 (provide 'init-prog)
 ;;; init-prog.el ends here
