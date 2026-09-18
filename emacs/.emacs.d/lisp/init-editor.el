@@ -8,6 +8,7 @@
   :custom-face
   (font-lock-operator-face ((t (:foreground "#56B6C2"))))
   (font-lock-number-face ((t (:foreground "#D19A66"))))
+  (font-lock-constant-face ((t (:foreground "#D19A66"))))
   :config
   (load-theme 'atom-one-dark t))
 
