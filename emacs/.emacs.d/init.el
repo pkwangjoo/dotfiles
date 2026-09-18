@@ -18,6 +18,7 @@
 (require 'init-completion)   ; ivy/counsel, projectile, eshell, tab-bar workspaces
 (require 'init-markdown)     ; markdown document reading view
 (require 'init-prog)         ; tree-sitter, eglot, corfu, apheleia, magit
+(require 'init-latex)        ; LaTeX: AUCTeX, texlab via eglot, pdf-tools
 (require 'init-typescript)   ; TS/TSX: LSP, ESLint, Prettier, Jest, folding
 (require 'init-lisp)         ; Clojure (CIDER) + Scheme/Racket (Geiser) + paredit
 (require 'init-ocaml)        ; OCaml: tuareg, dune, ocamlformat
